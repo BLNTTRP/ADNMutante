@@ -2,18 +2,20 @@ package com.mutant.detection.service;
 
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class MutantService {
 
     private static final int SEQUENCE_LENGTH = 4;
 
-    public boolean isMutant(String[] dna) {
-        int n = dna.length;
+    public boolean isMutant(List<String> dna) {
+        int n = dna.size();
         char[][] matrix = new char[n][n];
 
         // build matrix from the input DNA sequences
         for (int i = 0; i < n; i++) {
-            matrix[i] = dna[i].toCharArray();
+            matrix[i] = dna.get(i).toCharArray();
         }
 
         int mutantSequences = 0;
