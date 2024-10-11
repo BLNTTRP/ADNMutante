@@ -20,6 +20,8 @@ public class MutantController {
     public ResponseEntity<String> isMutant(@RequestBody Map<String, List<String>> dna) {
         List<String> dnaSequence = dna.get("dna");
 
+        System.out.println("DNA received: " + dnaSequence);
+
         if (dnaSequence == null || dnaSequence.isEmpty()) {
             return new ResponseEntity<>("Invalid DNA data", HttpStatus.BAD_REQUEST); // 400 Bad Request
         }
