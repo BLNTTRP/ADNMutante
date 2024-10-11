@@ -11,6 +11,7 @@
 	<groupId>com.mutantdetector</groupId>
 	<artifactId>Parcial1Prog3</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>Parcial1Prog3</name>
 	<description>Parcial1Prog3</description>
 	<url/>
