@@ -2,60 +2,56 @@ package com.mutant.detection.service;
 
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class MutantService {
 
-    private static final int SEQUENCE_LENGTH = 4;
+    // Metodo para detectar si el DNA pertenece a un mutante
+    public boolean isMutant(String[] dna) {
+        int n = dna.length;
 
-    public boolean isMutant(List<String> dna) {
-        int n = dna.size();
-        char[][] matrix = new char[n][n];
-
-        // build matrix from the input DNA sequences
-        for (int i = 0; i < n; i++) {
-            matrix[i] = dna.get(i).toCharArray();
-        }
-
+        // Contador de secuencias mutantes encontradas
         int mutantSequences = 0;
 
-        // check horizontally and vertically
+        // Recorrer la matriz de ADN para buscar secuencias mutantes
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                // horizontal check
-                if (j + SEQUENCE_LENGTH <= n && hasConsecutive(matrix, i, j, 0, 1)) {
+                if (hasHorizontalSequence(dna, i, j) || hasVerticalSequence(dna, i, j)
+                        || hasDiagonalRightSequence(dna, i, j) || hasDiagonalLeftSequence(dna, i, j)) {
                     mutantSequences++;
-                    if (mutantSequences > 1) return true;
-                }
-                // vertical check
-                if (i + SEQUENCE_LENGTH <= n && hasConsecutive(matrix, i, j, 1, 0)) {
-                    mutantSequences++;
-                    if (mutantSequences > 1) return true;
-                }
-                // diagonal checks
-                if (i + SEQUENCE_LENGTH <= n && j + SEQUENCE_LENGTH <= n && hasConsecutive(matrix, i, j, 1, 1)) {
-                    mutantSequences++;
-                    if (mutantSequences > 1) return true;
-                }
-                if (i + SEQUENCE_LENGTH <= n && j - SEQUENCE_LENGTH + 1 >= 0 && hasConsecutive(matrix, i, j, 1, -1)) {
-                    mutantSequences++;
-                    if (mutantSequences > 1) return true;
+                    if (mutantSequences > 1) {
+                        return true;  // Más de una secuencia encontrada, es un mutante
+                    }
                 }
             }
         }
-
-        return false; // return false if less than two sequences found
+        return false;  // Si no se encontraron más de una secuencia, no es mutante
     }
 
-    // check for four consecutive identical characters
-    private boolean hasConsecutive(char[][] matrix, int row, int col, int rowDir, int colDir) {
-        char firstChar = matrix[row][col];
-        for (int i = 1; i < SEQUENCE_LENGTH; i++) {
-            if (matrix[row + i * rowDir][col + i * colDir] != firstChar) {
-                return false;
-            }
-        }
-        return true;
+    // Metodo para verificar secuencia horizontal
+    private boolean hasHorizontalSequence(String[] dna, int row, int col) {
+        if (col + 3 >= dna.length) return false;
+        char base = dna[row].charAt(col);
+        return base == dna[row].charAt(col + 1) && base == dna[row].charAt(col + 2) && base == dna[row].charAt(col + 3);
+    }
+
+    // Metodo para verificar secuencia vertical
+    private boolean hasVerticalSequence(String[] dna, int row, int col) {
+        if (row + 3 >= dna.length) return false;
+        char base = dna[row].charAt(col);
+        return base == dna[row + 1].charAt(col) && base == dna[row + 2].charAt(col) && base == dna[row + 3].charAt(col);
+    }
+
+    // Metodo para verificar secuencia diagonal hacia la derecha
+    private boolean hasDiagonalRightSequence(String[] dna, int row, int col) {
+        if (row + 3 >= dna.length || col + 3 >= dna.length) return false;
+        char base = dna[row].charAt(col);
+        return base == dna[row + 1].charAt(col + 1) && base == dna[row + 2].charAt(col + 2) && base == dna[row + 3].charAt(col + 3);
+    }
+
+    // Metodo para verificar secuencia diagonal hacia la izquierda
+    private boolean hasDiagonalLeftSequence(String[] dna, int row, int col) {
+        if (row + 3 >= dna.length || col - 3 < 0) return false;
+        char base = dna[row].charAt(col);
+        return base == dna[row + 1].charAt(col - 1) && base == dna[row + 2].charAt(col - 2) && base == dna[row + 3].charAt(col - 3);
     }
 }

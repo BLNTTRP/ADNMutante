@@ -6,9 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-
 @RestController
 @RequestMapping("/mutant")
 public class MutantController {
@@ -17,16 +14,15 @@ public class MutantController {
     private MutantService mutantService;
 
     @PostMapping("/")
-    public ResponseEntity<String> isMutant(@RequestBody Map<String, List<String>> dna) {
-        List<String> dnaSequence = dna.get("dna");
+    public ResponseEntity<String> isMutant(@RequestBody String[] dna) {
 
-        System.out.println("DNA received: " + dnaSequence);
+        System.out.println("DNA received: " + String.join(",", dna));
 
-        if (dnaSequence == null || dnaSequence.isEmpty()) {
+        if (dna == null || dna.length == 0) {
             return new ResponseEntity<>("Invalid DNA data", HttpStatus.BAD_REQUEST); // 400 Bad Request
         }
 
-        boolean isMutant = mutantService.isMutant(dnaSequence);
+        boolean isMutant = mutantService.isMutant(dna);
 
         if (isMutant) {
             return new ResponseEntity<>("Mutant detected!", HttpStatus.OK); // 200 OK
