@@ -9,11 +9,18 @@ COPY pom.xml .
 COPY mvnw .
 COPY .mvn .mvn
 
-# Descargar las dependencias del proyecto
-RUN ./mvnw dependency:go-offline
-
-# Copiar todo el código fuente del proyecto
+# Copiar el código fuente del proyecto
 COPY src ./src
+
+# Convertimos el archivo mvnw a formato UNIX
+RUN apt-get update && apt-get install -y dos2unix
+RUN dos2unix ./mvnw
+
+# Da permisos de ejecución al script mvnw
+RUN chmod +x ./mvnw
+
+# Dependencias offline
+RUN ./mvnw dependency:go-offline
 
 # Compilar la aplicación
 RUN ./mvnw clean package -DskipTests
