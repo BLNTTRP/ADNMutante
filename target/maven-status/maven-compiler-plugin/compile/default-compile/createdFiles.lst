@@ -1,3 +1,4 @@
+com\mutant\detection\dto\DNARequestDTO.class
 com\mutant\detection\Parcial1Prog3Application.class
 com\mutant\detection\controller\MutantController.class
 com\mutant\detection\service\MutantService.class

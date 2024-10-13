@@ -1,5 +1,6 @@
 package com.mutant.detection.controller;
 
+import com.mutant.detection.dto.DNARequestDTO;
 import com.mutant.detection.service.MutantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,18 +14,16 @@ public class MutantController {
     @Autowired
     private MutantService mutantService;
 
+    public MutantController(MutantService mutantService) {
+        this.mutantService = mutantService;
+    }
+
     @PostMapping("/")
-    public ResponseEntity<String> isMutant(@RequestBody String[] dna) {
+    public ResponseEntity<String> isMutant(@RequestBody DNARequestDTO dnaRequest) {
 
-        System.out.println("DNA received: " + String.join(",", dna));
+        System.out.println("DNA received: " + dnaRequest.getDna());
 
-        if (dna == null || dna.length == 0) {
-            return new ResponseEntity<>("Invalid DNA data", HttpStatus.BAD_REQUEST); // 400 Bad Request
-        }
-
-        boolean isMutant = mutantService.isMutant(dna);
-
-        if (isMutant) {
+        if (mutantService.isMutant(dnaRequest.getDna())) {
             return new ResponseEntity<>("Mutant detected!", HttpStatus.OK); // 200 OK
         } else {
             return new ResponseEntity<>("Not a mutant.", HttpStatus.FORBIDDEN); // 403 Forbidden
