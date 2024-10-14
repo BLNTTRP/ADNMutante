@@ -1,6 +1,8 @@
 package com.mutant.detection.controller;
 
 import com.mutant.detection.dto.DNARequestDTO;
+import com.mutant.detection.model.ADN;
+import com.mutant.detection.repository.ADNRepository;
 import com.mutant.detection.service.MutantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,19 +16,35 @@ public class MutantController {
     @Autowired
     private MutantService mutantService;
 
-    public MutantController(MutantService mutantService) {
+    @Autowired
+    private ADNRepository adnRepository;
+
+    public MutantController(MutantService mutantService, ADNRepository adnRepository) {
         this.mutantService = mutantService;
+        this.adnRepository = adnRepository;
     }
 
     @PostMapping("/")
     public ResponseEntity<String> isMutant(@RequestBody DNARequestDTO dnaRequest) {
 
-        System.out.println("DNA received: " + dnaRequest.getDna());
+        // Convertir la lista a una única cadena de ADN
+        String dnaString = String.join("", dnaRequest.getDna());
 
-        if (mutantService.isMutant(dnaRequest.getDna())) {
-            return new ResponseEntity<>("Mutant detected!", HttpStatus.OK); // 200 OK
-        } else {
-            return new ResponseEntity<>("Not a mutant.", HttpStatus.FORBIDDEN); // 403 Forbidden
+        // Verificar si ya existe en la base de datos
+        if (adnRepository.existsByDnaSequence(dnaString)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("DNA already exists");
         }
+
+        // Verificar si es mutante
+        boolean isMutant = mutantService.isMutant(dnaRequest.getDna());
+
+        // Guardar el ADN en la base de datos
+        ADN adn = new ADN(dnaString, isMutant);
+        adnRepository.save(adn);
+
+        // Responder según el resultado
+        return isMutant ? ResponseEntity.status(HttpStatus.OK).body("Mutant detected")
+                        : ResponseEntity.status(HttpStatus.FORBIDDEN).body("Human detected");
+
     }
 }

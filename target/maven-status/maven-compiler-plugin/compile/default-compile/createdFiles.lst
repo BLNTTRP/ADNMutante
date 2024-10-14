@@ -1,4 +1,7 @@
-com\mutant\detection\dto\DNARequestDTO.class
-com\mutant\detection\Parcial1Prog3Application.class
 com\mutant\detection\controller\MutantController.class
 com\mutant\detection\service\MutantService.class
+com\mutant\detection\dto\DNARequestDTO.class
+com\mutant\detection\Parcial1Prog3Application.class
+com\mutant\detection\controller\StatsController.class
+com\mutant\detection\repository\ADNRepository.class
+com\mutant\detection\model\ADN.class
